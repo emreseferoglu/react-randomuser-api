@@ -10,16 +10,22 @@ body {
   justify-content: center;
   width: 370px !important;
   align-items: center;
-  height: 350px;
+  height: 450px;
   background-color: transparent;
   margin: 10px 5px;
   text-align: center;
   border: none;
   cursor: pointer;
   transition: 0.3s ease-in-out;
-  box-shadow: 1px 3px 5px #0e3040;
+  box-shadow: 1px 3px 4px #0e3040;
 }
 .card:hover {
   transform: scale(1.03);
   box-shadow: 1px 5px 8px #3c4e59;
+}
+.randomImage {
+  width: 170px;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 50%;
 }

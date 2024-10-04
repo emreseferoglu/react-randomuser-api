@@ -23,10 +23,9 @@ interface User {
 
 function User() {
   const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false); // Kartların yüklendiğini kontrol etmek için state
-  const [image, setImage] = useState("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loaded, setLoaded] = useState<boolean>(false); // Kartların yüklendiğini kontrol etmek içindir
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -36,23 +35,28 @@ function User() {
         const response = await fetch(
           "https://jsonplaceholder.typicode.com/users"
         );
+
         if (!response.ok) {
           const errorData = await response.json();
           console.error("API HATASI: " + errorData);
           throw new Error(errorData);
         }
-        const data = await response.json();
+
+        const data: User[] = await response.json();
         console.log(data);
 
         const userRandomPhoto = await Promise.all(
           data.map(async (user) => {
             const randomResponse = await fetch("https://randomuser.me/api/");
             const randomData = await randomResponse.json();
-            const photo = randomData.results[0].picture_large;
 
+            // Fotoğraf alanını kontrol edin
+            const photo = randomData.results[0].picture.large; // Büyük boyutlu fotoğrafı al
+
+            console.log(photo);
             return {
               ...user,
-              photo,
+              photo, // Kullanıcı verisine fotoğrafı ekle
             };
           })
         );
@@ -60,7 +64,7 @@ function User() {
         setUsers(userRandomPhoto);
       } catch (err) {
         console.error("Kullanıcılar yüklenirken hata oluştu" + err);
-        setError(err);
+        setError(err || "Bilinmeyen bi hata ile karşılaşıldı");
       } finally {
         setLoading(false);
       }
@@ -75,7 +79,12 @@ function User() {
           {users.map(({ id, name, email, address, photo }) => (
             <Col key={id} xs={12} xl={4} lg={6} md={12}>
               <Card className="card">
-                <CardImg src={photo}></CardImg>
+                <CardImg
+                  className="randomImage"
+                  variant="top"
+                  src={photo}
+                  width={100}
+                ></CardImg>
                 <CardBody>
                   <CardText>İsim: {name}</CardText>
                   <CardText>E-Posta: {email}</CardText>
