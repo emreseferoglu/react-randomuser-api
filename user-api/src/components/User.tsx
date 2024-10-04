@@ -9,7 +9,7 @@ import {
   CardTitle,
   CardBody,
   CardImg,
-} from "react-bootstrap";
+} from "react-bootstrap"; // CSS dosyasını içe aktarın
 
 interface User {
   id: number;
@@ -25,7 +25,7 @@ function User() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [loaded, setLoaded] = useState<boolean>(false); // Kartların yüklendiğini kontrol etmek içindir
+  const [loaded, setLoaded] = useState<boolean[]>([]); // Kartların yüklendiğini kontrol etmek için
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -49,14 +49,12 @@ function User() {
           data.map(async (user) => {
             const randomResponse = await fetch("https://randomuser.me/api/");
             const randomData = await randomResponse.json();
-
-            // Fotoğraf alanını kontrol edin
-            const photo = randomData.results[0].picture.large; // Büyük boyutlu fotoğrafı al
+            const photo = randomData.results[0].picture.large;
 
             console.log(photo);
             return {
               ...user,
-              photo, // Kullanıcı verisine fotoğrafı ekle
+              photo,
             };
           })
         );
@@ -64,7 +62,7 @@ function User() {
         setUsers(userRandomPhoto);
       } catch (err) {
         console.error("Kullanıcılar yüklenirken hata oluştu" + err);
-        setError(err || "Bilinmeyen bi hata ile karşılaşıldı");
+        setError(err || "Bilinmeyen bir hata ile karşılaşıldı");
       } finally {
         setLoading(false);
       }
@@ -72,30 +70,55 @@ function User() {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    // Kartlar yüklendiğinde visible sınıfını ekle
+    const handleScroll = () => {
+      const cards = document.querySelectorAll(".card");
+      cards.forEach((card, index) => {
+        const cardOffset = card.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+
+        if (cardOffset < windowHeight) {
+          // Kart görünüm alanına girdiyse
+          setLoaded((prev) => {
+            const newLoaded = [...prev];
+            newLoaded[index] = true; // Kartı görünür hale getir
+            return newLoaded;
+          });
+        }
+      });
+    };
+
+    handleScroll(); // Sayfa yüklendiğinde kartları kontrol et
+    window.addEventListener("scroll", handleScroll); // Kaydırıldıkça kontrol et
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll); // Temizleme
+    };
+  }, [users]);
+
   return (
-    <>
-      <Container>
-        <Row>
-          {users.map(({ id, name, email, address, photo }) => (
-            <Col key={id} xs={12} xl={4} lg={6} md={12}>
-              <Card className="card">
-                <CardImg
-                  className="randomImage"
-                  variant="top"
-                  src={photo}
-                  width={100}
-                ></CardImg>
-                <CardBody>
-                  <CardText>İsim: {name}</CardText>
-                  <CardText>E-Posta: {email}</CardText>
-                  <CardText>Adres: {address.street}</CardText>
-                </CardBody>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
-    </>
+    <Container>
+      <Row>
+        {users.map(({ id, name, email, address, photo }, index) => (
+          <Col key={id} xs={12} xl={4} lg={6} md={12}>
+            <Card className={`card ${loaded[index] ? "visible" : ""}`}>
+              <CardImg
+                className="randomImage"
+                variant="top"
+                src={photo}
+                width={100}
+              ></CardImg>
+              <CardBody>
+                <CardText>İsim: {name}</CardText>
+                <CardText>E-Posta: {email}</CardText>
+                <CardText>Adres: {address.street}</CardText>
+              </CardBody>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
 }
 

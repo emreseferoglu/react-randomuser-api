@@ -1,8 +1,7 @@
 body {
   background-color: #d4d3d3;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-  font-size: 24px;
+  font-family: "Poppins", sans-serif !important;
+  font-size: 20px;
   font-weight: bold;
 }
 .card {
@@ -16,8 +15,14 @@ body {
   text-align: center;
   border: none;
   cursor: pointer;
-  transition: 0.3s ease-in-out;
+  opacity: 0; /* Başlangıçta kartlar görünmez */
+  transform: translateY(20px); /* Kartları biraz aşağıda başlat */
+  transition: opacity 0.5s ease, transform 0.5s ease; /* Geçiş efekti */
   box-shadow: 1px 3px 4px #0e3040;
+}
+.card.visible {
+  opacity: 1; /* Kart görünür hale geldiğinde */
+  transform: translateY(0); /* Kartın başlangıç konumuna dönmesi */
 }
 .card:hover {
   transform: scale(1.03);
