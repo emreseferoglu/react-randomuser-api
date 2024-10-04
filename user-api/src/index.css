@@ -1,0 +1,25 @@
+body {
+  background-color: #d4d3d3;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+}
+.card {
+  display: flex;
+  justify-content: center;
+  width: 370px !important;
+  align-items: center;
+  height: 350px;
+  background-color: transparent;
+  margin: 10px 5px;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  box-shadow: 1px 3px 5px #0e3040;
+}
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 1px 5px 8px #3c4e59;
+}
